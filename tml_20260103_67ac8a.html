@@ -1,0 +1,4317 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ALDAN MOONSKULL | Система управління</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #06b6d4;
+            --dark: #1f2937;
+            --darker: #111827;
+            --light: #f9fafb;
+            --lighter: #f3f4f6;
+            --border: #e5e7eb;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-dark: linear-gradient(135deg, #1e3a8a 0%, #4c1d95 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: var(--gradient);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--darker);
+            color: white;
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            transform: translateX(0);
+        }
+
+        .sidebar.mobile-hidden {
+            transform: translateX(-100%);
+        }
+
+        .logo {
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .logo .tagline {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-top: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            padding: 0 1rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: #9ca3af;
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: rgba(37, 99, 235, 0.2);
+            color: white;
+            border-left: 4px solid var(--primary);
+        }
+
+        .nav-item i {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            width: 24px;
+        }
+
+        .nav-item span {
+            font-weight: 500;
+        }
+
+        .nav-item .badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            min-height: 100vh;
+            width: calc(100% - 280px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .page-title i {
+            background: var(--gradient);
+            padding: 0.8rem;
+            border-radius: 12px;
+            color: white;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .date-display {
+            background: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .date-display i {
+            color: var(--primary);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .stat-icon.revenue { background: var(--success); }
+        .stat-icon.profit { background: var(--primary); }
+        .stat-icon.sales { background: var(--secondary); }
+        .stat-icon.stock { background: var(--warning); }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin: 0.5rem 0;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .stat-change.up { color: var(--success); }
+        .stat-change.down { color: var(--danger); }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-label i {
+            color: var(--primary);
+        }
+
+        .form-control {
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: var(--lighter);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-control.select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%232563eb' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 3rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            text-decoration: none;
+            user-select: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #0da271;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            min-width: 800px;
+        }
+
+        .table thead {
+            background: var(--gradient-dark);
+            color: white;
+        }
+
+        .table th {
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .table th:last-child {
+            border-right: none;
+        }
+
+        .table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tr:hover td {
+            background: rgba(37, 99, 235, 0.02);
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .badge-primary {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+        }
+
+        /* Stock indicators */
+        .stock-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stock-low {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .stock-medium {
+            color: var(--warning);
+            font-weight: 600;
+        }
+
+        .stock-good {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        /* Charts */
+        .chart-container {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            height: 400px;
+            position: relative;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab {
+            padding: 0.875rem 1.5rem;
+            cursor: pointer;
+            background: transparent;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            color: #6b7280;
+            transition: var(--transition);
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            background: rgba(37, 99, 235, 0.05);
+            color: var(--primary);
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Search */
+        .search-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+            min-width: 250px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Utility */
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .text-warning { color: var(--warning); }
+        .text-primary { color: var(--primary); }
+
+        .currency {
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #6b7280;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #d1d5db;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: #4b5563;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 80px;
+                padding: 1rem 0;
+            }
+            
+            .sidebar .logo h1,
+            .sidebar .logo .tagline,
+            .sidebar .nav-item span,
+            .sidebar .nav-item .badge {
+                display: none;
+            }
+            
+            .sidebar .logo {
+                padding: 0 1rem 1rem;
+                text-align: center;
+            }
+            
+            .sidebar .nav-item {
+                padding: 1rem;
+                justify-content: center;
+            }
+            
+            .sidebar .nav-item i {
+                margin-right: 0;
+                font-size: 1.5rem;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+                padding: 1.5rem;
+                width: calc(100% - 80px);
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .sidebar {
+                width: 280px;
+                padding: 2rem 0;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar .logo h1,
+            .sidebar .logo .tagline,
+            .sidebar .nav-item span,
+            .sidebar .nav-item .badge {
+                display: block;
+            }
+            
+            .sidebar .nav-item {
+                padding: 1rem 1.5rem;
+                justify-content: flex-start;
+            }
+            
+            .sidebar .nav-item i {
+                margin-right: 1rem;
+                font-size: 1.2rem;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 1rem;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+                margin-top: 4rem;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                min-width: 100%;
+            }
+            
+            .date-display {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .page-title {
+                font-size: 1.25rem;
+            }
+            
+            .modal-content {
+                padding: 1.5rem;
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 0.75rem;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+            
+            .card {
+                padding: 1rem;
+            }
+            
+            .table th,
+            .table td {
+                padding: 0.75rem 1rem;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 100;
+            border: none;
+        }
+
+        .fab:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .fab {
+                width: 50px;
+                height: 50px;
+                font-size: 1.25rem;
+                bottom: 1.5rem;
+                right: 1.5rem;
+            }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            background: white;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 2000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .toast-icon {
+            font-size: 1.5rem;
+        }
+
+        .toast.success .toast-icon { color: var(--success); }
+        .toast.error .toast-icon { color: var(--danger); }
+        .toast.warning .toast-icon { color: var(--warning); }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .toast-message {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .toast {
+                top: 1rem;
+                right: 1rem;
+                left: 1rem;
+                width: calc(100% - 2rem);
+                max-width: none;
+            }
+        }
+
+        /* Receipt Styles */
+        .receipt-container {
+            background: white;
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 1px dashed #000;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .receipt-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .receipt-company {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .receipt-info {
+            margin-bottom: 15px;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .receipt-label {
+            font-weight: bold;
+        }
+
+        .receipt-divider {
+            border-top: 1px dashed #000;
+            margin: 10px 0;
+        }
+
+        .receipt-total {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .receipt-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 10px;
+            color: #666;
+        }
+
+        .delete-receipt-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .delete-receipt-btn:hover {
+            background: #dc2626;
+            transform: scale(1.1);
+        }
+
+        /* Receipt Preview Modal */
+        .receipt-preview-modal .modal-content {
+            max-width: 400px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .receipt-preview-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .receipt-preview-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .receipt-preview-body {
+            padding: 2rem;
+            background: #f8fafc;
+        }
+
+        .receipt-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Sync Status */
+        .sync-status {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 9999;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            opacity: 0.9;
+            max-width: 200px;
+            transition: var(--transition);
+        }
+
+        .sync-status.syncing {
+            background: var(--warning);
+            color: white;
+        }
+
+        .sync-status.connected {
+            background: var(--success);
+            color: white;
+        }
+
+        .sync-status.disconnected {
+            background: var(--danger);
+            color: white;
+        }
+
+        .sync-status i {
+            animation: spin 1s linear infinite;
+        }
+
+        .sync-status.connected i {
+            animation: none;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .sync-status {
+                top: 5rem;
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+                justify-content: center;
+            }
+        }
+
+        /* Overlay for mobile */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Mobile optimizations */
+        input, select, textarea, button {
+            font-size: 16px !important; /* Prevents zoom on iOS */
+        }
+
+        .touch-action-none {
+            touch-action: none;
+        }
+
+        /* Action buttons in tables */
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: nowrap;
+        }
+
+        .table-actions .btn {
+            padding: 0.5rem;
+            min-width: 40px;
+            height: 40px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sync Status Indicator -->
+    <div id="syncStatus" class="sync-status">
+        <i class="fas fa-sync-alt"></i>
+        <span>Синхронізація...</span>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <h1>ALDAN MOONSKULL</h1>
+                <div class="tagline">Система управління</div>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-item active" onclick="openTab('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Панель керування</span>
+                    <span class="badge">PRO</span>
+                </div>
+                
+                <div class="nav-item" onclick="openTab('products')">
+                    <i class="fas fa-box"></i>
+                    <span>Чехли на iPhone</span>
+                    <span class="badge" id="totalProductsBadge">0</span>
+                </div>
+                
+                <div class="nav-item" onclick="openTab('inventory')">
+                    <i class="fas fa-arrow-down"></i>
+                    <span>Прихід товару</span>
+                </div>
+                
+                <div class="nav-item" onclick="openTab('sales')">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>Продажі</span>
+                </div>
+                
+                <div class="nav-item" onclick="openTab('stock')">
+                    <i class="fas fa-warehouse"></i>
+                    <span>Залишки</span>
+                    <span class="badge" id="totalStockBadge">0</span>
+                </div>
+                
+                <div class="nav-item" onclick="openTab('reports')">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Звіти</span>
+                </div>
+                
+                <div class="nav-item" onclick="openTab('receipts')">
+                    <i class="fas fa-receipt"></i>
+                    <span>Архів чеків</span>
+                    <span class="badge" id="totalReceiptsBadge">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="header">
+                    <div class="page-title">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Панель керування</span>
+                    </div>
+                    
+                    <div class="header-actions">
+                        <div class="date-display">
+                            <i class="far fa-calendar-alt"></i>
+                            <span id="current-date"></span>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="refreshData()">
+                            <i class="fas fa-sync-alt"></i> Оновити
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon revenue">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="stat-value"><span class="currency">₴</span> <span id="today-revenue">0.00</span></div>
+                        <div class="stat-label">Сьогоднішня виручка</div>
+                        <div class="stat-change up">
+                            <i class="fas fa-arrow-up"></i> <span id="revenue-change">0%</span> порівняно з учора
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon profit">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stat-value text-success"><span class="currency">₴</span> <span id="today-profit">0.00</span></div>
+                        <div class="stat-label">Чистий прибуток</div>
+                        <div class="stat-change up">
+                            <i class="fas fa-arrow-up"></i> <span id="profit-change">0%</span> порівняно з учора
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon sales">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-value"><span id="today-sales">0</span> шт</div>
+                        <div class="stat-label">Продано товарів</div>
+                        <div class="stat-change up">
+                            <i class="fas fa-arrow-up"></i> <span id="sales-change">0%</span> порівняно з учора
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon stock">
+                            <i class="fas fa-warehouse"></i>
+                        </div>
+                        <div class="stat-value"><span id="total-stock">0</span> шт</div>
+                        <div class="stat-label">Всього чехлів на складі</div>
+                        <div class="stat-change">
+                            <i class="fas fa-info-circle"></i> <span id="critical-items">0</span> критичних
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-history"></i>
+                            <span>Останні операції</span>
+                        </div>
+                        <button class="btn btn-sm btn-primary" onclick="loadRecentTransactions()">
+                            <i class="fas fa-redo"></i> Оновити
+                        </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="table" id="recentTransactions">
+                            <thead>
+                                <tr>
+                                    <th>Дата</th>
+                                    <th>Тип</th>
+                                    <th>Товар</th>
+                                    <th>Модель</th>
+                                    <th>Кількість</th>
+                                    <th>Сума</th>
+                                    <th>Прибуток</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Продажі за останні 7 днів</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="dashboardChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Tab -->
+            <div id="products" class="tab-content" style="display: none;">
+                <div class="header">
+                    <div class="page-title">
+                        <i class="fas fa-box"></i>
+                        <span>Управління чехлами на iPhone</span>
+                    </div>
+                    
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="showAddProductModal()">
+                            <i class="fas fa-plus"></i> Додати товар
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteAllProducts()">
+                            <i class="fas fa-trash"></i> Видалити всі
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search -->
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" id="productSearch" 
+                               placeholder="Пошук товарів за назвою, моделлю, кольором або артикулом" 
+                               oninput="filterProducts()">
+                    </div>
+                    
+                    <select class="form-control select" id="modelSearch" onchange="filterProducts()" style="width: 200px;">
+                        <option value="">Всі моделі</option>
+                        <option value="iPhone 13">iPhone 13</option>
+                        <option value="iPhone 13 Pro">iPhone 13 Pro</option>
+                        <option value="iPhone 13 Pro Max">iPhone 13 Pro Max</option>
+                        <option value="iPhone 14 Pro Max">iPhone 14 Pro Max</option>
+                        <option value="iPhone 15">iPhone 15</option>
+                        <option value="iPhone 15 Pro">iPhone 15 Pro</option>
+                        <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
+                        <option value="iPhone 16">iPhone 16</option>
+                        <option value="iPhone 16 Pro">iPhone 16 Pro</option>
+                        <option value="iPhone 16 Pro Max">iPhone 16 Pro Max</option>
+                        <option value="iPhone 17">iPhone 17</option>
+                        <option value="iPhone 17 Pro">iPhone 17 Pro</option>
+                        <option value="iPhone 17 Pro Max">iPhone 17 Pro Max</option>
+                    </select>
+                    
+                    <button class="btn" onclick="resetSearch()">
+                        <i class="fas fa-sync-alt"></i> Скинути
+                    </button>
+                </div>
+
+                <!-- Products Table -->
+                <div class="card">
+                    <div class="table-container">
+                        <table class="table" id="productsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Назва</th>
+                                    <th>Модель</th>
+                                    <th>Тип</th>
+                                    <th>Колір</th>
+                                    <th>Ціна</th>
+                                    <th>Собівартість</th>
+                                    <th>Прибуток</th>
+                                    <th>Артикул</th>
+                                    <th>Дії</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Tab -->
+            <div id="inventory" class="tab-content" style="display: none;">
+                <div class="header">
+                    <div class="page-title">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>Прихід товару на склад</span>
+                    </div>
+                    
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="showAddInventoryModal()">
+                            <i class="fas fa-plus"></i> Новий прихід
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Inventory Table -->
+                <div class="card">
+                    <div class="table-container">
+                        <table class="table" id="inventoryTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Товар</th>
+                                    <th>Модель</th>
+                                    <th>Кількість</th>
+                                    <th>Ціна закупки</th>
+                                    <th>Дата</th>
+                                    <th>Сума</th>
+                                    <th>Дії</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sales Tab -->
+            <div id="sales" class="tab-content" style="display: none;">
+                <div class="header">
+                    <div class="page-title">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Продажі товарів</span>
+                    </div>
+                    
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="showAddSaleModal()">
+                            <i class="fas fa-plus"></i> Новий продаж
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sales Table -->
+                <div class="card">
+                    <div class="table-container">
+                        <table class="table" id="salesTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Товар</th>
+                                    <th>Модель</th>
+                                    <th>Кількість</th>
+                                    <th>Ціна продажу</th>
+                                    <th>Дата</th>
+                                    <th>Сума</th>
+                                    <th>Прибуток</th>
+                                    <th>Дії</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stock Tab -->
+            <div id="stock" class="tab-content" style="display: none;">
+                <div class="header">
+                    <div class="page-title">
+                        <i class="fas fa-warehouse"></i>
+                        <span>Залишки товарів на складі</span>
+                    </div>
+                    
+                    <div class="header-actions">
+                        <button class="btn btn-warning" onclick="showLowStockAlert()">
+                            <i class="fas fa-exclamation-triangle"></i> Низькі залишки
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stock Table -->
+                <div class="card">
+                    <div class="table-container">
+                        <table class="table" id="stockTable">
+                            <thead>
+                                <tr>
+                                    <th>Товар</th>
+                                    <th>Модель</th>
+                                    <th>Тип</th>
+                                    <th>Колір</th>
+                                    <th>Залишок</th>
+                                    <th>Ціна закупки</th>
+                                    <th>Ціна продажу</th>
+                                    <th>Прибуток</th>
+                                    <th>Дії</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Tab -->
+            <div id="reports" class="tab-content" style="display: none;">
+                <div class="header">
+                    <div class="page-title">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Фінансові звіти</span>
+                    </div>
+                    
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="generateReport()">
+                            <i class="fas fa-file-alt"></i> Сформувати звіт
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Report Summary -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value"><span class="currency">₴</span> <span id="report-revenue">0.00</span></div>
+                        <div class="stat-label">Загальна виручка</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value text-success"><span class="currency">₴</span> <span id="report-profit">0.00</span></div>
+                        <div class="stat-label">Чистий прибуток</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value"><span id="report-sales">0</span> шт</div>
+                        <div class="stat-label">Продано товарів</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value"><span id="report-margin">0</span>%</div>
+                        <div class="stat-label">Рентабельність</div>
+                    </div>
+                </div>
+
+                <!-- Report Chart -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Розподіл прибутку по товарам</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="reportChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Report Table -->
+                <div class="card">
+                    <div class="table-container">
+                        <table class="table" id="reportTable">
+                            <thead>
+                                <tr>
+                                    <th>Товар</th>
+                                    <th>Модель</th>
+                                    <th>Продано</th>
+                                    <th>Виручка</th>
+                                    <th>Витрати</th>
+                                    <th>Прибуток</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receipts Tab -->
+            <div id="receipts" class="tab-content" style="display: none;">
+                <div class="header">
+                    <div class="page-title">
+                        <i class="fas fa-receipt"></i>
+                        <span>Архів чеків продажу</span>
+                    </div>
+                    
+                    <div class="header-actions">
+                        <button class="btn btn-danger" onclick="deleteAllReceipts()">
+                            <i class="fas fa-trash"></i> Видалити всі чеки
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Receipts Archive -->
+                <div class="card">
+                    <div id="receiptsArchive">
+                        <!-- Receipts will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Action Button -->
+        <button class="fab" onclick="exportData()" title="Експорт даних">
+            <i class="fas fa-file-export"></i>
+        </button>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast">
+            <div class="toast-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="toast-content">
+                <div class="toast-title" id="toast-title">Успіх!</div>
+                <div class="toast-message" id="toast-message">Операція виконана успішно</div>
+            </div>
+            <button class="toast-close" onclick="hideToast()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-plus"></i> Додати новий товар
+                </div>
+                <button class="modal-close" onclick="hideAddProductModal()">&times;</button>
+            </div>
+            <form id="productForm" onsubmit="addProduct(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="productName">
+                            <i class="fas fa-tag"></i> Назва товару *
+                        </label>
+                        <input type="text" id="productName" class="form-control" 
+                               placeholder="Наприклад: Чохол на iPhone 15 Pro" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="productModel">
+                            <i class="fas fa-mobile-alt"></i> Модель *
+                        </label>
+                        <select id="productModel" class="form-control select" required>
+                            <option value="">Оберіть модель</option>
+                            <option value="iPhone 13">iPhone 13</option>
+                            <option value="iPhone 13 Pro">iPhone 13 Pro</option>
+                            <option value="iPhone 13 Pro Max">iPhone 13 Pro Max</option>
+                            <option value="iPhone 14 Pro Max">iPhone 14 Pro Max</option>
+                            <option value="iPhone 15">iPhone 15</option>
+                            <option value="iPhone 15 Pro">iPhone 15 Pro</option>
+                            <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
+                            <option value="iPhone 16">iPhone 16</option>
+                            <option value="iPhone 16 Pro">iPhone 16 Pro</option>
+                            <option value="iPhone 16 Pro Max">iPhone 16 Pro Max</option>
+                            <option value="iPhone 17">iPhone 17</option>
+                            <option value="iPhone 17 Pro">iPhone 17 Pro</option>
+                            <option value="iPhone 17 Pro Max">iPhone 17 Pro Max</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="productType">
+                            <i class="fas fa-shield-alt"></i> Тип чехла *
+                        </label>
+                        <select id="productType" class="form-control select" required>
+                            <option value="Скелетний">Скелетний</option>
+                            <option value="Антиударний">Антиударний</option>
+                            <option value="Магнітний">Магнітний (MagSafe)</option>
+                            <option value="Прозорий">Прозорий</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="productColor">
+                            <i class="fas fa-palette"></i> Колір *
+                        </label>
+                        <select id="productColor" class="form-control select" required>
+                            <option value="Чорний">Чорний</option>
+                            <option value="Білий">Білий</option>
+                            <option value="Прозорий">Прозорий</option>
+                            <option value="Камуфляж">Камуфляж</option>
+                            <option value="Червоний">Червоний</option>
+                            <option value="Синій">Синій</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="productPrice">
+                            <i class="fas fa-money-bill-wave"></i> Ціна продажу *
+                        </label>
+                        <input type="number" id="productPrice" class="form-control" 
+                               placeholder="499" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="productCost">
+                            <i class="fas fa-dollar-sign"></i> Собівартість *
+                        </label>
+                        <input type="number" id="productCost" class="form-control" 
+                               placeholder="140" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="productArticle">
+                            <i class="fas fa-barcode"></i> Артикул *
+                        </label>
+                        <input type="text" id="productArticle" class="form-control" 
+                               placeholder="IP15P-BLK-SIL" required>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                        <i class="fas fa-check"></i> Додати товар
+                    </button>
+                    <button type="button" class="btn" onclick="hideAddProductModal()" style="flex: 1;">
+                        <i class="fas fa-times"></i> Скасувати
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Inventory Modal -->
+    <div id="addInventoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-arrow-down"></i> Новий прихід товару
+                </div>
+                <button class="modal-close" onclick="hideAddInventoryModal()">&times;</button>
+            </div>
+            <form id="inventoryForm" onsubmit="addInventory(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="inventoryProduct">
+                            <i class="fas fa-box"></i> Товар *
+                        </label>
+                        <select id="inventoryProduct" class="form-control select" required></select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="inventoryQuantity">
+                            <i class="fas fa-calculator"></i> Кількість *
+                        </label>
+                        <input type="number" id="inventoryQuantity" class="form-control" 
+                               placeholder="0" min="1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="inventoryPrice">
+                            <i class="fas fa-money-bill-wave"></i> Ціна закупки *
+                        </label>
+                        <input type="number" id="inventoryPrice" class="form-control" 
+                               placeholder="140" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="inventoryDate">
+                            <i class="far fa-calendar-alt"></i> Дата *
+                        </label>
+                        <input type="date" id="inventoryDate" class="form-control" required>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                        <i class="fas fa-check"></i> Підтвердити прихід
+                    </button>
+                    <button type="button" class="btn" onclick="hideAddInventoryModal()" style="flex: 1;">
+                        <i class="fas fa-times"></i> Скасувати
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Sale Modal -->
+    <div id="addSaleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-shopping-cart"></i> Новий продаж
+                </div>
+                <button class="modal-close" onclick="hideAddSaleModal()">&times;</button>
+            </div>
+            <form id="saleForm" onsubmit="addSale(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="saleProduct">
+                            <i class="fas fa-box"></i> Товар *
+                        </label>
+                        <select id="saleProduct" class="form-control select" required 
+                                onchange="updateSalePrice()"></select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="saleQuantity">
+                            <i class="fas fa-calculator"></i> Кількість *
+                        </label>
+                        <input type="number" id="saleQuantity" class="form-control" 
+                               placeholder="0" min="1" required onchange="calculateSaleTotal()">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="salePrice">
+                            <i class="fas fa-money-bill-wave"></i> Ціна продажу *
+                        </label>
+                        <input type="number" id="salePrice" class="form-control" 
+                               placeholder="499" step="0.01" min="0" required 
+                               onchange="calculateSaleTotal()">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="saleDate">
+                            <i class="far fa-calendar-alt"></i> Дата *
+                        </label>
+                        <input type="date" id="saleDate" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-calculator"></i> Загальна сума
+                        </label>
+                        <div class="form-control" style="font-weight: bold; font-size: 1.2rem; color: var(--primary);">
+                            <span id="saleTotal">0.00</span> ₴
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-coins"></i> Наявний залишок
+                        </label>
+                        <div class="form-control" id="availableStock">
+                            Завантаження...
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                        <i class="fas fa-cash-register"></i> Оформити продаж
+                    </button>
+                    <button type="button" class="btn" onclick="hideAddSaleModal()" style="flex: 1;">
+                        <i class="fas fa-times"></i> Скасувати
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div id="editProductModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-edit"></i> Редагувати товар
+                </div>
+                <button class="modal-close" onclick="hideEditProductModal()">&times;</button>
+            </div>
+            <form id="editProductForm" onsubmit="updateProduct(event)">
+                <input type="hidden" id="editProductId">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="editProductName">
+                            <i class="fas fa-tag"></i> Назва товару *
+                        </label>
+                        <input type="text" id="editProductName" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editProductModel">
+                            <i class="fas fa-mobile-alt"></i> Модель *
+                        </label>
+                        <select id="editProductModel" class="form-control select" required>
+                            <option value="">Оберіть модель</option>
+                            <option value="iPhone 13">iPhone 13</option>
+                            <option value="iPhone 13 Pro">iPhone 13 Pro</option>
+                            <option value="iPhone 13 Pro Max">iPhone 13 Pro Max</option>
+                            <option value="iPhone 14 Pro Max">iPhone 14 Pro Max</option>
+                            <option value="iPhone 15">iPhone 15</option>
+                            <option value="iPhone 15 Pro">iPhone 15 Pro</option>
+                            <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
+                            <option value="iPhone 16">iPhone 16</option>
+                            <option value="iPhone 16 Pro">iPhone 16 Pro</option>
+                            <option value="iPhone 16 Pro Max">iPhone 16 Pro Max</option>
+                            <option value="iPhone 17">iPhone 17</option>
+                            <option value="iPhone 17 Pro">iPhone 17 Pro</option>
+                            <option value="iPhone 17 Pro Max">iPhone 17 Pro Max</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editProductType">
+                            <i class="fas fa-shield-alt"></i> Тип чехла *
+                        </label>
+                        <select id="editProductType" class="form-control select" required>
+                            <option value="Скелетний">Скелетний</option>
+                            <option value="Антиударний">Антиударний</option>
+                            <option value="Магнітний">Магнітний (MagSafe)</option>
+                            <option value="Прозорий">Прозорий</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editProductColor">
+                            <i class="fas fa-palette"></i> Колір *
+                        </label>
+                        <select id="editProductColor" class="form-control select" required>
+                            <option value="Чорний">Чорний</option>
+                            <option value="Білий">Білий</option>
+                            <option value="Прозорий">Прозорий</option>
+                            <option value="Камуфляж">Камуфляж</option>
+                            <option value="Червоний">Червоний</option>
+                            <option value="Синій">Синій</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editProductPrice">
+                            <i class="fas fa-money-bill-wave"></i> Ціна продажу *
+                        </label>
+                        <input type="number" id="editProductPrice" class="form-control" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editProductCost">
+                            <i class="fas fa-dollar-sign"></i> Собівартість *
+                        </label>
+                        <input type="number" id="editProductCost" class="form-control" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editProductArticle">
+                            <i class="fas fa-barcode"></i> Артикул *
+                        </label>
+                        <input type="text" id="editProductArticle" class="form-control" required>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                        <i class="fas fa-check"></i> Зберегти зміни
+                    </button>
+                    <button type="button" class="btn" onclick="hideEditProductModal()" style="flex: 1;">
+                        <i class="fas fa-times"></i> Скасувати
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Inventory Modal -->
+    <div id="editInventoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-edit"></i> Редагувати прихід
+                </div>
+                <button class="modal-close" onclick="hideEditInventoryModal()">&times;</button>
+            </div>
+            <form id="editInventoryForm" onsubmit="updateInventory(event)">
+                <input type="hidden" id="editInventoryId">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="editInventoryProduct">
+                            <i class="fas fa-box"></i> Товар *
+                        </label>
+                        <select id="editInventoryProduct" class="form-control select" required></select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editInventoryQuantity">
+                            <i class="fas fa-calculator"></i> Кількість *
+                        </label>
+                        <input type="number" id="editInventoryQuantity" class="form-control" min="1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editInventoryPrice">
+                            <i class="fas fa-money-bill-wave"></i> Ціна закупки *
+                        </label>
+                        <input type="number" id="editInventoryPrice" class="form-control" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editInventoryDate">
+                            <i class="far fa-calendar-alt"></i> Дата *
+                        </label>
+                        <input type="date" id="editInventoryDate" class="form-control" required>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                        <i class="fas fa-check"></i> Зберегти зміни
+                    </button>
+                    <button type="button" class="btn" onclick="hideEditInventoryModal()" style="flex: 1;">
+                        <i class="fas fa-times"></i> Скасувати
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Receipt Preview Modal -->
+    <div id="receiptPreviewModal" class="modal receipt-preview-modal">
+        <div class="modal-content">
+            <div class="receipt-preview-header">
+                <div class="receipt-preview-title">
+                    <i class="fas fa-receipt"></i> Чек продажу
+                </div>
+                <div style="font-size: 0.9rem; opacity: 0.9;">Архів чеків продажу</div>
+            </div>
+            <div class="receipt-preview-body">
+                <div id="receiptPreviewContent">
+                    <!-- Receipt content will be loaded here -->
+                </div>
+                <div class="receipt-actions">
+                    <button class="btn btn-primary" onclick="printReceipt()">
+                        <i class="fas fa-print"></i> Друкувати
+                    </button>
+                    <button class="btn" onclick="hideReceiptPreview()">
+                        <i class="fas fa-times"></i> Закрити
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // ===============================
+        // ИСПРАВЛЕННАЯ СИСТЕМА СИНХРОНИЗАЦИИ
+        // ===============================
+        
+        // Глобальные переменные для графиков
+        let dashboardChart = null;
+        let reportChart = null;
+        
+        // Улучшенная система синхронизации
+        class SyncSystem {
+            constructor() {
+                this.tabId = 'iphonecase-elite-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+                this.otherTabs = new Set();
+                this.syncInterval = null;
+                this.storageKey = 'iphonecase-elite-sync';
+                this.lastUpdateTime = 0;
+                this.isOnline = true;
+                
+                this.init();
+            }
+            
+            init() {
+                console.log('Инициализация синхронизации, ID вкладки:', this.tabId);
+                
+                // Настраиваем слушатель для localStorage
+                window.addEventListener('storage', this.handleStorageEvent.bind(this));
+                
+                // Настраиваем слушатель для online/offline
+                window.addEventListener('online', () => {
+                    this.isOnline = true;
+                    this.updateSyncStatus();
+                });
+                
+                window.addEventListener('offline', () => {
+                    this.isOnline = false;
+                    this.updateSyncStatus();
+                });
+                
+                // Запускаем синхронизацию
+                this.startSync();
+                
+                // Представляемся другим вкладкам
+                this.announcePresence();
+                
+                // Обновляем статус
+                this.updateSyncStatus();
+            }
+            
+            startSync() {
+                // Проверяем синхронизацию каждые 2 секунды
+                this.syncInterval = setInterval(() => {
+                    this.checkForUpdates();
+                    this.announcePresence();
+                }, 2000);
+            }
+            
+            announcePresence() {
+                // Сохраняем информацию о текущей вкладке
+                const presenceData = {
+                    type: 'presence',
+                    tabId: this.tabId,
+                    timestamp: Date.now(),
+                    data: this.getCurrentDataHash()
+                };
+                
+                localStorage.setItem(`${this.storageKey}-presence`, JSON.stringify(presenceData));
+                
+                // Очищаем старые данные через 5 секунд
+                setTimeout(() => {
+                    if (localStorage.getItem(`${this.storageKey}-presence`) === JSON.stringify(presenceData)) {
+                        localStorage.removeItem(`${this.storageKey}-presence`);
+                    }
+                }, 5000);
+            }
+            
+            checkForUpdates() {
+                // Проверяем наличие обновлений от других вкладок
+                const syncData = localStorage.getItem(`${this.storageKey}-data`);
+                if (syncData) {
+                    try {
+                        const data = JSON.parse(syncData);
+                        if (data.tabId !== this.tabId && data.timestamp > this.lastUpdateTime) {
+                            console.log('Обнаружено обновление от другой вкладки:', data.type);
+                            this.handleDataUpdate(data);
+                            this.lastUpdateTime = data.timestamp;
+                        }
+                    } catch (e) {
+                        console.error('Ошибка при обработке данных синхронизации:', e);
+                    }
+                }
+                
+                // Проверяем наличие других вкладок
+                this.checkOtherTabs();
+            }
+            
+            checkOtherTabs() {
+                const oldTabs = new Set(this.otherTabs);
+                this.otherTabs.clear();
+                
+                // Проверяем все ключи localStorage на наличие данных о других вкладках
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith(`${this.storageKey}-presence`)) {
+                        try {
+                            const data = JSON.parse(localStorage.getItem(key));
+                            if (data.tabId !== this.tabId && Date.now() - data.timestamp < 10000) {
+                                this.otherTabs.add(data.tabId);
+                            }
+                        } catch (e) {
+                            // Игнорируем невалидные данные
+                        }
+                    }
+                }
+                
+                // Если изменилось количество вкладок, обновляем статус
+                if (oldTabs.size !== this.otherTabs.size) {
+                    this.updateSyncStatus();
+                }
+            }
+            
+            handleStorageEvent(event) {
+                if (event.key && event.key.startsWith(`${this.storageKey}-`)) {
+                    if (event.key === `${this.storageKey}-data` && event.newValue) {
+                        // Обрабатываем новые данные
+                        setTimeout(() => this.checkForUpdates(), 100);
+                    } else if (event.key.includes('-presence')) {
+                        // Обновляем список вкладок
+                        setTimeout(() => this.checkOtherTabs(), 100);
+                    }
+                }
+            }
+            
+            handleDataUpdate(data) {
+                if (!data || !data.type) return;
+                
+                console.log('Обработка обновления:', data.type);
+                
+                // Обрабатываем разные типы обновлений
+                switch(data.type) {
+                    case 'products':
+                        if (data.products) {
+                            localStorage.setItem('products', JSON.stringify(data.products));
+                            this.refreshTab('products');
+                        }
+                        break;
+                        
+                    case 'inventory':
+                        if (data.inventory) {
+                            localStorage.setItem('inventory', JSON.stringify(data.inventory));
+                            this.refreshTab('inventory');
+                        }
+                        break;
+                        
+                    case 'sales':
+                        if (data.sales) {
+                            localStorage.setItem('sales', JSON.stringify(data.sales));
+                            this.refreshTab('sales');
+                        }
+                        break;
+                        
+                    case 'receipts':
+                        if (data.receipts) {
+                            localStorage.setItem('receipts', JSON.stringify(data.receipts));
+                            this.refreshTab('receipts');
+                        }
+                        break;
+                        
+                    case 'all':
+                        // Полное обновление всех данных
+                        if (data.products) localStorage.setItem('products', JSON.stringify(data.products));
+                        if (data.inventory) localStorage.setItem('inventory', JSON.stringify(data.inventory));
+                        if (data.sales) localStorage.setItem('sales', JSON.stringify(data.sales));
+                        if (data.receipts) localStorage.setItem('receipts', JSON.stringify(data.receipts));
+                        
+                        this.refreshAllTabs();
+                        break;
+                }
+                
+                // Всегда обновляем отображение количества
+                updateTotalStockDisplay();
+                
+                // Показываем уведомление
+                this.showSyncNotification('Дані оновлено з іншого пристрою');
+            }
+            
+            refreshTab(tabName) {
+                if (document.getElementById(tabName).style.display !== 'none') {
+                    switch(tabName) {
+                        case 'products':
+                            loadProducts();
+                            break;
+                        case 'inventory':
+                            loadInventory();
+                            break;
+                        case 'sales':
+                            loadSales();
+                            break;
+                        case 'receipts':
+                            loadReceipts();
+                            break;
+                    }
+                }
+                
+                // Всегда обновляем дашборд если он открыт
+                if (document.getElementById('dashboard').style.display === 'block') {
+                    updateDashboard();
+                }
+            }
+            
+            refreshAllTabs() {
+                loadProducts();
+                loadInventory();
+                loadSales();
+                loadStock();
+                loadReceipts();
+                updateDashboard();
+            }
+            
+            broadcastDataUpdate(type, data) {
+                const syncData = {
+                    type: type,
+                    tabId: this.tabId,
+                    timestamp: Date.now(),
+                    ...data
+                };
+                
+                // Сохраняем данные для других вкладок
+                localStorage.setItem(`${this.storageKey}-data`, JSON.stringify(syncData));
+                
+                // Очищаем через 3 секунды
+                setTimeout(() => {
+                    if (localStorage.getItem(`${this.storageKey}-data`) === JSON.stringify(syncData)) {
+                        localStorage.removeItem(`${this.storageKey}-data`);
+                    }
+                }, 3000);
+                
+                console.log('Отправлено обновление:', type);
+            }
+            
+            getCurrentDataHash() {
+                // Создаем простой хэш текущих данных для сравнения
+                const products = localStorage.getItem('products') || '[]';
+                const sales = localStorage.getItem('sales') || '[]';
+                return btoa(products + sales).substr(0, 20);
+            }
+            
+            updateSyncStatus() {
+                const statusElement = document.getElementById('syncStatus');
+                if (!statusElement) return;
+                
+                const totalTabs = this.otherTabs.size + 1;
+                
+                if (!this.isOnline) {
+                    statusElement.className = 'sync-status disconnected';
+                    statusElement.innerHTML = `<i class="fas fa-wifi-slash"></i><span>Офлайн</span>`;
+                } else if (totalTabs > 1) {
+                    statusElement.className = 'sync-status connected';
+                    statusElement.innerHTML = `<i class="fas fa-link"></i><span>Синхронізовано (${totalTabs} пристрої)</span>`;
+                } else {
+                    statusElement.className = 'sync-status';
+                    statusElement.innerHTML = `<i class="fas fa-desktop"></i><span>Один пристрій</span>`;
+                }
+            }
+            
+            showSyncNotification(message) {
+                showToast(message, 'success');
+            }
+            
+            cleanup() {
+                if (this.syncInterval) {
+                    clearInterval(this.syncInterval);
+                }
+                
+                // Удаляем информацию о текущей вкладке
+                localStorage.removeItem(`${this.storageKey}-presence`);
+            }
+        }
+        
+        // Инициализируем систему синхронизации
+        const syncSystem = new SyncSystem();
+        
+        // ===============================
+        // ФУНКЦИИ ДЛЯ МОБИЛЬНОЙ АДАПТАЦИИ
+        // ===============================
+        
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const isActive = sidebar.classList.contains('active');
+            
+            if (isActive) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            } else {
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        function closeSidebarOnMobile() {
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('overlay');
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+        
+        // Обновленная функция openTab для мобильных устройств
+        function openTab(tabName) {
+            // Закрываем сайдбар на мобильных
+            closeSidebarOnMobile();
+            
+            // Обновляем активные элементы навигации
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Находим соответствующий навигационный элемент
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                if (item.getAttribute('onclick') === `openTab('${tabName}')`) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Скрываем все табы
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Показываем контент таба
+            const tabContent = document.getElementById(tabName);
+            if (tabContent) {
+                tabContent.style.display = 'block';
+                document.querySelector('.main-content').scrollTop = 0;
+                
+                // Загружаем данные для активного таба
+                switch(tabName) {
+                    case 'dashboard':
+                        updateDashboard();
+                        break;
+                    case 'products':
+                        loadProducts();
+                        break;
+                    case 'inventory':
+                        loadInventory();
+                        updateProductSelect('inventoryProduct');
+                        updateProductSelect('editInventoryProduct');
+                        break;
+                    case 'sales':
+                        loadSales();
+                        updateProductSelect('saleProduct');
+                        break;
+                    case 'stock':
+                        loadStock();
+                        break;
+                    case 'reports':
+                        generateReport();
+                        break;
+                    case 'receipts':
+                        loadReceipts();
+                        break;
+                }
+            }
+        }
+        
+        // Обработка изменений размера окна
+        function handleResize() {
+            if (window.innerWidth > 768) {
+                // На десктопе показываем сайдбар всегда
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('overlay');
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+        
+        window.addEventListener('resize', handleResize);
+        
+        // ===============================
+        // ОСНОВНЫЕ ФУНКЦИИ (АДАПТИРОВАННЫЕ)
+        // ===============================
+
+        // Функция для расчета общего количества чехлов на складе
+        function calculateTotalStock() {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+            const sales = JSON.parse(localStorage.getItem('sales')) || [];
+            
+            let totalStock = 0;
+            
+            // Для каждого продукта рассчитываем остаток
+            products.forEach(product => {
+                const totalIn = inventory
+                    .filter(i => i.productId === product.id)
+                    .reduce((sum, i) => sum + i.quantity, 0);
+                
+                const totalOut = sales
+                    .filter(s => s.productId === product.id)
+                    .reduce((sum, s) => sum + s.quantity, 0);
+                
+                const stock = totalIn - totalOut;
+                if (stock > 0) {
+                    totalStock += stock;
+                }
+            });
+            
+            return totalStock;
+        }
+
+        // Функция для обновления отображения общего количества
+        function updateTotalStockDisplay() {
+            const totalStock = calculateTotalStock();
+            
+            // Обновляем в дашборде
+            const totalStockElement = document.getElementById('total-stock');
+            if (totalStockElement) {
+                totalStockElement.textContent = totalStock;
+            }
+            
+            // Обновляем в меню
+            const totalStockBadge = document.getElementById('totalStockBadge');
+            if (totalStockBadge) {
+                totalStockBadge.textContent = totalStock;
+            }
+            
+            // Обновляем количество товаров в меню
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const totalProductsBadge = document.getElementById('totalProductsBadge');
+            if (totalProductsBadge) {
+                totalProductsBadge.textContent = products.length;
+            }
+            
+            // Обновляем количество чеков в меню
+            const receipts = JSON.parse(localStorage.getItem('receipts')) || [];
+            const totalReceiptsBadge = document.getElementById('totalReceiptsBadge');
+            if (totalReceiptsBadge) {
+                totalReceiptsBadge.textContent = receipts.length;
+            }
+            
+            return totalStock;
+        }
+
+        // Обновленная функция для подсчета низких остатков
+        function calculateLowStock() {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+            const sales = JSON.parse(localStorage.getItem('sales')) || [];
+            
+            let lowStockCount = 0;
+            let criticalCount = 0;
+            
+            products.forEach(product => {
+                const totalIn = inventory
+                    .filter(i => i.productId === product.id)
+                    .reduce((sum, i) => sum + i.quantity, 0);
+                
+                const totalOut = sales
+                    .filter(s => s.productId === product.id)
+                    .reduce((sum, s) => sum + s.quantity, 0);
+                
+                const stock = totalIn - totalOut;
+                if (stock <= 0) {
+                    criticalCount++;
+                    lowStockCount++;
+                } else if (stock <= 3) {
+                    lowStockCount++;
+                }
+            });
+            
+            return { lowStockCount, criticalCount };
+        }
+
+        // Инициализация данных в localStorage
+        function initializeData() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Инициализация продуктов
+            if (!localStorage.getItem('products')) {
+                const initialProducts = [
+                    // Вояка с пистолетом и штрихами (чёрный)
+                    {id: 1, name: "Вояка с пистолетом и штрихами", model: "iPhone 13", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "GSH4483", created: today},
+                    {id: 2, name: "Вояка с пистолетом и штрихами", model: "iPhone 13 Pro", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "GSH4483", created: today},
+                    {id: 3, name: "Вояка с пистолетом и штрихами", model: "iPhone 13 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "GSH4483", created: today},
+                    {id: 4, name: "Вояка с пистолетом и штрихами", model: "iPhone 15", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "GSH4483", created: today},
+                    {id: 5, name: "Вояка с пистолетом и штрихами", model: "iPhone 15 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "GSH4483", created: today},
+                    
+                    // Череп в шлеме (камуфляж)
+                    {id: 6, name: "Череп в шлеме", model: "iPhone 13", type: "Скелетний", color: "Камуфляж", price: 499, cost: 140, article: "GSH4027", created: today},
+                    {id: 7, name: "Череп в шлеме", model: "iPhone 13 Pro", type: "Скелетний", color: "Камуфляж", price: 499, cost: 140, article: "GSH4027", created: today},
+                    {id: 8, name: "Череп в шлеме", model: "iPhone 13 Pro Max", type: "Скелетний", color: "Камуфляж", price: 499, cost: 140, article: "GSH4027", created: today},
+                    {id: 9, name: "Череп в шлеме", model: "iPhone 14 Pro Max", type: "Скелетний", color: "Камуфляж", price: 499, cost: 140, article: "GSH4027", created: today},
+                    {id: 10, name: "Череп в шлеме", model: "iPhone 15", type: "Скелетний", color: "Камуфляж", price: 499, cost: 140, article: "GSH4027", created: today},
+                    {id: 11, name: "Череп в шлеме", model: "iPhone 15 Pro Max", type: "Скелетний", color: "Камуфляж", price: 499, cost: 140, article: "GSH4027", created: today},
+                    
+                    // Женщина череп (чёрный)
+                    {id: 12, name: "Женщина череп", model: "iPhone 13 Pro", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "ЕЕ-Р667РР-ВК", created: today},
+                    {id: 13, name: "Женщина череп", model: "iPhone 13 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "ЕЕ-Р667РР-ВК", created: today},
+                    {id: 14, name: "Женщина череп", model: "iPhone 15", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "ЕЕ-Р667РР-ВК", created: today},
+                    {id: 15, name: "Женщина череп", model: "iPhone 16", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "ЕЕ-Р667РР-ВК", created: today},
+                    
+                    // Молнии (чёрный)
+                    {id: 16, name: "Молнии", model: "iPhone 13", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "24044817880", created: today},
+                    {id: 17, name: "Молнии", model: "iPhone 13 Pro", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "24044817880", created: today},
+                    {id: 18, name: "Молнии", model: "iPhone 13 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "24044817880", created: today},
+                    {id: 19, name: "Молнии", model: "iPhone 15", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "24044817880", created: today},
+                    {id: 20, name: "Молнии", model: "iPhone 15 Pro", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "24044817880", created: today},
+                    {id: 21, name: "Молнии", model: "iPhone 16 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "24044817880", created: today},
+                    
+                    // Пистолеты (чёрный)
+                    {id: 22, name: "Пистолеты", model: "iPhone 13", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "29523172886", created: today},
+                    {id: 23, name: "Пистолеты", model: "iPhone 13 Pro", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "29523172886", created: today},
+                    {id: 24, name: "Пистолеты", model: "iPhone 13 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "29523172886", created: today},
+                    {id: 25, name: "Пистолеты", model: "iPhone 15", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "29523172886", created: today},
+                    {id: 26, name: "Пистолеты", model: "iPhone 15 Pro", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "29523172886", created: today},
+                    {id: 27, name: "Пистолеты", model: "iPhone 15 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "29523172886", created: today},
+                    {id: 28, name: "Пистолеты", model: "iPhone 16", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "29523172886", created: today},
+                    {id: 29, name: "Пистолеты", model: "iPhone 16 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "29523172886", created: today},
+                    
+                    // Вояка скелет за компьютером (чёрный)
+                    {id: 30, name: "Вояка скелет за компьютером", model: "iPhone 13", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "XG1734", created: today},
+                    {id: 31, name: "Вояка скелет за компьютером", model: "iPhone 13 Pro", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "XG1734", created: today},
+                    {id: 32, name: "Вояка скелет за компьютером", model: "iPhone 13 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "XG1734", created: today},
+                    {id: 33, name: "Вояка скелет за компьютером", model: "iPhone 15", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "XG1734", created: today},
+                    {id: 34, name: "Вояка скелет за компьютером", model: "iPhone 15 Pro", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "XG1734", created: today},
+                    {id: 35, name: "Вояка скелет за компьютером", model: "iPhone 15 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "XG1734", created: today},
+                    {id: 36, name: "Вояка скелет за компьютором", model: "iPhone 16", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "XG1734", created: today},
+                    {id: 37, name: "Вояка скелет за компьютером", model: "iPhone 16 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "XG1734", created: today},
+                    {id: 38, name: "Вояка скелет за компьютером", model: "iPhone 17 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "XG1734", created: today},
+                    
+                    // Скелет в шлеме с автоматом (чёрный)
+                    {id: 39, name: "Скелет в шлеме с автоматом", model: "iPhone 13", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "64049565882", created: today},
+                    {id: 40, name: "Скелет в шлеме с автоматом", model: "iPhone 13 Pro", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "64049565882", created: today},
+                    {id: 41, name: "Скелет в шлеме с автоматом", model: "iPhone 13 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "64049565882", created: today},
+                    {id: 42, name: "Скелет в шлеме с автоматом", model: "iPhone 15", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "64049565882", created: today},
+                    {id: 43, name: "Скелет в шлеме с автоматом", model: "iPhone 15 Pro", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "64049565882", created: today},
+                    {id: 44, name: "Скелет в шлеме с автоматом", model: "iPhone 16 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "64049565882", created: today},
+                    {id: 45, name: "Скелет в шлеме с автоматом", model: "iPhone 17", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "64049565882", created: today},
+                    {id: 46, name: "Скелет в шлеме с автоматом", model: "iPhone 17 Pro", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "64049565882", created: today},
+                    
+                    // Вояка в противогазе (чёрный, ребристый)
+                    {id: 47, name: "Вояка в противогазе", model: "iPhone 13", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "SW250801TPT33", created: today},
+                    {id: 48, name: "Вояка в противогазе", model: "iPhone 13 Pro", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "SW250801TPT33", created: today},
+                    {id: 49, name: "Вояка в противогазе", model: "iPhone 13 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "SW250801TPT33", created: today},
+                    {id: 50, name: "Вояка в противогазе", model: "iPhone 15", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "SW250801TPT33", created: today},
+                    {id: 51, name: "Вояка в противогазе", model: "iPhone 15 Pro", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "SW250801TPT33", created: today},
+                    {id: 52, name: "Вояка в противогазе", model: "iPhone 15 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "SW250801TPT33", created: today},
+                    {id: 53, name: "Вояка в противогазе", model: "iPhone 16", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "SW250801TPT33", created: today},
+                    {id: 54, name: "Вояка в противогазе", model: "iPhone 16 Pro Max", type: "Скелетний", color: "Чорний", price: 499, cost: 140, article: "SW250801TPT33", created: today}
+                ];
+                localStorage.setItem('products', JSON.stringify(initialProducts));
+            }
+            
+            // Инициализация прихода
+            if (!localStorage.getItem('inventory')) {
+                const initialInventory = [
+                    // Вояка с пистолетом и штрихами
+                    {id: 1, productId: 1, quantity: 2, price: 140, date: today},
+                    {id: 2, productId: 2, quantity: 1, price: 140, date: today},
+                    {id: 3, productId: 3, quantity: 1, price: 140, date: today},
+                    {id: 4, productId: 4, quantity: 2, price: 140, date: today},
+                    {id: 5, productId: 5, quantity: 1, price: 140, date: today},
+                    
+                    // Череп в шлеме
+                    {id: 6, productId: 6, quantity: 2, price: 140, date: today},
+                    {id: 7, productId: 7, quantity: 1, price: 140, date: today},
+                    {id: 8, productId: 8, quantity: 2, price: 140, date: today},
+                    {id: 9, productId: 9, quantity: 1, price: 140, date: today},
+                    {id: 10, productId: 10, quantity: 2, price: 140, date: today},
+                    {id: 11, productId: 11, quantity: 2, price: 140, date: today},
+                    
+                    // Женщина череп
+                    {id: 12, productId: 12, quantity: 2, price: 140, date: today},
+                    {id: 13, productId: 13, quantity: 2, price: 140, date: today},
+                    {id: 14, productId: 14, quantity: 3, price: 140, date: today},
+                    {id: 15, productId: 15, quantity: 1, price: 140, date: today},
+                    
+                    // Молнии
+                    {id: 16, productId: 16, quantity: 3, price: 140, date: today},
+                    {id: 17, productId: 17, quantity: 1, price: 140, date: today},
+                    {id: 18, productId: 18, quantity: 2, price: 140, date: today},
+                    {id: 19, productId: 19, quantity: 2, price: 140, date: today},
+                    {id: 20, productId: 20, quantity: 2, price: 140, date: today},
+                    {id: 21, productId: 21, quantity: 2, price: 140, date: today},
+                    
+                    // Пистолеты
+                    {id: 22, productId: 22, quantity: 2, price: 140, date: today},
+                    {id: 23, productId: 23, quantity: 2, price: 140, date: today},
+                    {id: 24, productId: 24, quantity: 2, price: 140, date: today},
+                    {id: 25, productId: 25, quantity: 2, price: 140, date: today},
+                    {id: 26, productId: 26, quantity: 1, price: 140, date: today},
+                    {id: 27, productId: 27, quantity: 2, price: 140, date: today},
+                    {id: 28, productId: 28, quantity: 1, price: 140, date: today},
+                    {id: 29, productId: 29, quantity: 1, price: 140, date: today},
+                    
+                    // Вояка скелет за компьютером
+                    {id: 30, productId: 30, quantity: 2, price: 140, date: today},
+                    {id: 31, productId: 31, quantity: 1, price: 140, date: today},
+                    {id: 32, productId: 32, quantity: 1, price: 140, date: today},
+                    {id: 33, productId: 33, quantity: 1, price: 140, date: today},
+                    {id: 34, productId: 34, quantity: 1, price: 140, date: today},
+                    {id: 35, productId: 35, quantity: 1, price: 140, date: today},
+                    {id: 36, productId: 36, quantity: 1, price: 140, date: today},
+                    {id: 37, productId: 37, quantity: 1, price: 140, date: today},
+                    {id: 38, productId: 38, quantity: 1, price: 140, date: today},
+                    
+                    // Скелет в шлеме с автоматом
+                    {id: 39, productId: 39, quantity: 3, price: 140, date: today},
+                    {id: 40, productId: 40, quantity: 2, price: 140, date: today},
+                    {id: 41, productId: 41, quantity: 3, price: 140, date: today},
+                    {id: 42, productId: 42, quantity: 3, price: 140, date: today},
+                    {id: 43, productId: 43, quantity: 3, price: 140, date: today},
+                    {id: 44, productId: 44, quantity: 2, price: 140, date: today},
+                    {id: 45, productId: 45, quantity: 1, price: 140, date: today},
+                    {id: 46, productId: 46, quantity: 1, price: 140, date: today},
+                    
+                    // Вояка в противогазе
+                    {id: 47, productId: 47, quantity: 2, price: 140, date: today},
+                    {id: 48, productId: 48, quantity: 2, price: 140, date: today},
+                    {id: 49, productId: 49, quantity: 3, price: 140, date: today},
+                    {id: 50, productId: 50, quantity: 3, price: 140, date: today},
+                    {id: 51, productId: 51, quantity: 3, price: 140, date: today},
+                    {id: 52, productId: 52, quantity: 3, price: 140, date: today},
+                    {id: 53, productId: 53, quantity: 2, price: 140, date: today},
+                    {id: 54, productId: 54, quantity: 2, price: 140, date: today}
+                ];
+                localStorage.setItem('inventory', JSON.stringify(initialInventory));
+            }
+            
+            // Инициализация продаж
+            if (!localStorage.getItem('sales')) {
+                const initialSales = [];
+                localStorage.setItem('sales', JSON.stringify(initialSales));
+            }
+            
+            // Инициализация чеков
+            if (!localStorage.getItem('receipts')) {
+                const receipts = [];
+                localStorage.setItem('receipts', JSON.stringify(receipts));
+            }
+            
+            // Обновляем отображение общего количества
+            updateTotalStockDisplay();
+        }
+
+        // Утилиты
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const title = document.getElementById('toast-title');
+            const toastMessage = document.getElementById('toast-message');
+            
+            title.textContent = type === 'success' ? 'Успіх!' : 
+                              type === 'error' ? 'Помилка!' : 'Увага!';
+            toastMessage.textContent = message;
+            
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function formatDate(date) {
+            return new Date(date).toLocaleDateString('uk-UA', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function formatTime(date) {
+            return new Date(date).toLocaleTimeString('uk-UA', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Продукты
+        function loadProducts() {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const searchText = document.getElementById('productSearch')?.value.toLowerCase() || '';
+            const modelFilter = document.getElementById('modelSearch')?.value || '';
+            
+            const tbody = document.querySelector('#productsTable tbody');
+            tbody.innerHTML = '';
+            
+            if (products.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" style="text-align: center; padding: 3rem;">
+                            <i class="fas fa-box-open" style="font-size: 3rem; color: #d1d5db; margin-bottom: 1rem;"></i>
+                            <h3 style="color: #6b7280;">Немає товарів</h3>
+                            <p style="color: #9ca3af;">Додайте перший товар, натиснувши кнопку "Додати товар"</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let filteredProducts = products;
+            
+            if (searchText) {
+                filteredProducts = filteredProducts.filter(p => 
+                    p.name.toLowerCase().includes(searchText) ||
+                    p.model.toLowerCase().includes(searchText) ||
+                    p.color.toLowerCase().includes(searchText) ||
+                    p.article.toLowerCase().includes(searchText)
+                );
+            }
+            
+            if (modelFilter) {
+                filteredProducts = filteredProducts.filter(p => p.model === modelFilter);
+            }
+            
+            filteredProducts.forEach(product => {
+                const profit = product.price - product.cost;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.id}</td>
+                    <td><strong>${product.name}</strong></td>
+                    <td><span class="badge badge-primary">${product.model}</span></td>
+                    <td>${product.type}</td>
+                    <td><span style="color: ${getColorValue(product.color)}">${product.color}</span></td>
+                    <td><strong>${product.price.toFixed(2)} ₴</strong></td>
+                    <td>${product.cost.toFixed(2)} ₴</td>
+                    <td><span class="${profit >= 0 ? 'text-success' : 'text-danger'}">${profit.toFixed(2)} ₴</span></td>
+                    <td><code>${product.article}</code></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn btn-sm btn-primary" onclick="editProduct(${product.id})" title="Редагувати">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteProduct(${product.id})" title="Видалити">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Обновляем бейдж в меню
+            updateTotalStockDisplay();
+        }
+
+        function deleteAllProducts() {
+            if (!confirm('Ви впевнені, що хочете видалити ВСІ товари? Ця дія незворотна!')) {
+                return;
+            }
+            
+            localStorage.removeItem('products');
+            localStorage.removeItem('inventory');
+            localStorage.removeItem('sales');
+            localStorage.removeItem('receipts');
+            
+            // Инициализируем заново с новыми товарами
+            initializeData();
+            
+            loadProducts();
+            loadInventory();
+            loadSales();
+            loadReceipts();
+            updateDashboard();
+            
+            // Синхронизируем с другими вкладками
+            syncSystem.broadcastDataUpdate('all', {
+                products: JSON.parse(localStorage.getItem('products')),
+                inventory: JSON.parse(localStorage.getItem('inventory')),
+                sales: JSON.parse(localStorage.getItem('sales')),
+                receipts: JSON.parse(localStorage.getItem('receipts'))
+            });
+            
+            showToast('Всі товари видалено та додано нові!', 'success');
+        }
+
+        function getColorValue(color) {
+            const colors = {
+                'Чорний': '#000000',
+                'Білий': '#ffffff',
+                'Прозорий': '#d1d5db',
+                'Камуфляж': '#5d5d5d',
+                'Червоний': '#ef4444',
+                'Синій': '#3b82f6'
+            };
+            return colors[color] || '#6b7280';
+        }
+
+        function filterProducts() {
+            loadProducts();
+        }
+
+        function resetSearch() {
+            document.getElementById('productSearch').value = '';
+            document.getElementById('modelSearch').value = '';
+            loadProducts();
+        }
+
+        function showAddProductModal() {
+            document.getElementById('addProductModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideAddProductModal() {
+            document.getElementById('addProductModal').classList.remove('active');
+            document.getElementById('productForm').reset();
+            document.body.style.overflow = 'auto';
+        }
+
+        function addProduct(e) {
+            e.preventDefault();
+            
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+            
+            const product = {
+                id: newId,
+                name: document.getElementById('productName').value,
+                model: document.getElementById('productModel').value,
+                type: document.getElementById('productType').value,
+                color: document.getElementById('productColor').value,
+                price: parseFloat(document.getElementById('productPrice').value),
+                cost: parseFloat(document.getElementById('productCost').value),
+                article: document.getElementById('productArticle').value,
+                created: new Date().toISOString().split('T')[0]
+            };
+            
+            products.push(product);
+            localStorage.setItem('products', JSON.stringify(products));
+            
+            hideAddProductModal();
+            loadProducts();
+            updateProductSelect('inventoryProduct');
+            updateProductSelect('editInventoryProduct');
+            updateProductSelect('saleProduct');
+            updateDashboard();
+            
+            // Синхронизируем с другими вкладками
+            syncSystem.broadcastDataUpdate('products', { products: products });
+            
+            showToast('Товар успішно додано!', 'success');
+        }
+
+        function editProduct(id) {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const product = products.find(p => p.id === id);
+            
+            if (!product) return;
+            
+            document.getElementById('editProductId').value = product.id;
+            document.getElementById('editProductName').value = product.name;
+            document.getElementById('editProductModel').value = product.model;
+            document.getElementById('editProductType').value = product.type;
+            document.getElementById('editProductColor').value = product.color;
+            document.getElementById('editProductPrice').value = product.price;
+            document.getElementById('editProductCost').value = product.cost;
+            document.getElementById('editProductArticle').value = product.article;
+            
+            document.getElementById('editProductModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideEditProductModal() {
+            document.getElementById('editProductModal').classList.remove('active');
+            document.getElementById('editProductForm').reset();
+            document.body.style.overflow = 'auto';
+        }
+
+        function updateProduct(e) {
+            e.preventDefault();
+            
+            const id = parseInt(document.getElementById('editProductId').value);
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const index = products.findIndex(p => p.id === id);
+            
+            if (index === -1) return;
+            
+            const oldPrice = products[index].price;
+            const oldCost = products[index].cost;
+            
+            products[index] = {
+                ...products[index],
+                name: document.getElementById('editProductName').value,
+                model: document.getElementById('editProductModel').value,
+                type: document.getElementById('editProductType').value,
+                color: document.getElementById('editProductColor').value,
+                price: parseFloat(document.getElementById('editProductPrice').value),
+                cost: parseFloat(document.getElementById('editProductCost').value),
+                article: document.getElementById('editProductArticle').value
+            };
+            
+            localStorage.setItem('products', JSON.stringify(products));
+            
+            // Обновляем все связанные записи
+            updateInventoryPrices(id, oldPrice, oldCost, products[index].price, products[index].cost);
+            
+            hideEditProductModal();
+            loadProducts();
+            loadInventory();
+            loadStock();
+            updateProductSelect('inventoryProduct');
+            updateProductSelect('editInventoryProduct');
+            updateProductSelect('saleProduct');
+            updateDashboard();
+            
+            // Синхронизируем с другими вкладками
+            syncSystem.broadcastDataUpdate('products', { products: products });
+            
+            showToast('Товар успішно оновлено!', 'success');
+        }
+
+        function updateInventoryPrices(productId, oldPrice, oldCost, newPrice, newCost) {
+            // Обновляем приход товара
+            let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+            inventory = inventory.map(item => {
+                if (item.productId === productId && item.price === oldCost) {
+                    return {...item, price: newCost};
+                }
+                return item;
+            });
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            
+            // Обновляем продажи
+            let sales = JSON.parse(localStorage.getItem('sales')) || [];
+            sales = sales.map(sale => {
+                if (sale.productId === productId) {
+                    const profit = sale.quantity * (newPrice - newCost);
+                    return {...sale, price: newPrice, profit: profit};
+                }
+                return sale;
+            });
+            localStorage.setItem('sales', JSON.stringify(sales));
+            
+            // Обновляем чеки
+            let receipts = JSON.parse(localStorage.getItem('receipts')) || [];
+            receipts = receipts.map(receipt => {
+                if (receipt.productId === productId) {
+                    const total = receipt.quantity * newPrice;
+                    const profit = receipt.quantity * (newPrice - newCost);
+                    return {...receipt, price: newPrice, total: total, profit: profit};
+                }
+                return receipt;
+            });
+            localStorage.setItem('receipts', JSON.stringify(receipts));
+        }
+
+        function deleteProduct(id) {
+            if (!confirm('Ви впевнені, що хочете видалити цей товар? Всі пов\'язані записи також будуть видалені.')) {
+                return;
+            }
+            
+            let products = JSON.parse(localStorage.getItem('products')) || [];
+            products = products.filter(p => p.id !== id);
+            localStorage.setItem('products', JSON.stringify(products));
+            
+            let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+            inventory = inventory.filter(i => i.productId !== id);
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            
+            let sales = JSON.parse(localStorage.getItem('sales')) || [];
+            sales = sales.filter(s => s.productId !== id);
+            localStorage.setItem('sales', JSON.stringify(sales));
+            
+            // Удаляем связанные чеки
+            let receipts = JSON.parse(localStorage.getItem('receipts')) || [];
+            receipts = receipts.filter(r => r.productId !== id);
+            localStorage.setItem('receipts', JSON.stringify(receipts));
+            
+            loadProducts();
+            loadInventory();
+            loadSales();
+            loadStock();
+            loadReceipts();
+            updateDashboard();
+            updateProductSelect('inventoryProduct');
+            updateProductSelect('editInventoryProduct');
+            updateProductSelect('saleProduct');
+            
+            // Синхронизируем все данные
+            syncSystem.broadcastDataUpdate('all', {
+                products: products,
+                inventory: inventory,
+                sales: sales,
+                receipts: receipts
+            });
+            
+            showToast('Товар успішно видалено!', 'success');
+        }
+
+        // Инвентарь
+        function loadInventory() {
+            const inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            
+            const tbody = document.querySelector('#inventoryTable tbody');
+            tbody.innerHTML = '';
+            
+            if (inventory.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 3rem;">
+                            <i class="fas fa-arrow-down" style="font-size: 3rem; color: #d1d5db; margin-bottom: 1rem;"></i>
+                            <h3 style="color: #6b7280;">Немає записів про прихід</h3>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            inventory.forEach(item => {
+                const product = products.find(p => p.id === item.productId);
+                const total = item.quantity * item.price;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${product ? product.name : 'Товар видалено'}</td>
+                    <td>${product ? product.model : '—'}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.price.toFixed(2)} ₴</td>
+                    <td>${item.date}</td>
+                    <td><strong>${total.toFixed(2)} ₴</strong></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn btn-sm btn-primary" onclick="editInventory(${item.id})" title="Редагувати">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteInventory(${item.id})" title="Видалити">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function editInventory(id) {
+            const inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+            const item = inventory.find(i => i.id === id);
+            
+            if (!item) return;
+            
+            document.getElementById('editInventoryId').value = item.id;
+            document.getElementById('editInventoryQuantity').value = item.quantity;
+            document.getElementById('editInventoryPrice').value = item.price;
+            document.getElementById('editInventoryDate').value = item.date;
+            
+            // Заполняем селект товаров
+            updateProductSelect('editInventoryProduct');
+            document.getElementById('editInventoryProduct').value = item.productId;
+            
+            document.getElementById('editInventoryModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideEditInventoryModal() {
+            document.getElementById('editInventoryModal').classList.remove('active');
+            document.getElementById('editInventoryForm').reset();
+            document.body.style.overflow = 'auto';
+        }
+
+        function updateInventory(e) {
+            e.preventDefault();
+            
+            const id = parseInt(document.getElementById('editInventoryId').value);
+            const inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+            const index = inventory.findIndex(i => i.id === id);
+            
+            if (index === -1) return;
+            
+            inventory[index] = {
+                ...inventory[index],
+                productId: parseInt(document.getElementById('editInventoryProduct').value),
+                quantity: parseInt(document.getElementById('editInventoryQuantity').value),
+                price: parseFloat(document.getElementById('editInventoryPrice').value),
+                date: document.getElementById('editInventoryDate').value
+            };
+            
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            
+            hideEditInventoryModal();
+            loadInventory();
+            loadStock();
+            updateDashboard();
+            
+            // Синхронизируем с другими вкладками
+            syncSystem.broadcastDataUpdate('inventory', { inventory: inventory });
+            
+            showToast('Прихід товару успішно оновлено!', 'success');
+        }
+
+        function showAddInventoryModal() {
+            updateProductSelect('inventoryProduct');
+            document.getElementById('inventoryDate').valueAsDate = new Date();
+            document.getElementById('addInventoryModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideAddInventoryModal() {
+            document.getElementById('addInventoryModal').classList.remove('active');
+            document.getElementById('inventoryForm').reset();
+            document.body.style.overflow = 'auto';
+        }
+
+        function addInventory(e) {
+            e.preventDefault();
+            
+            const inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+            const newId = inventory.length > 0 ? Math.max(...inventory.map(i => i.id)) + 1 : 1;
+            
+            const item = {
+                id: newId,
+                productId: parseInt(document.getElementById('inventoryProduct').value),
+                quantity: parseInt(document.getElementById('inventoryQuantity').value),
+                price: parseFloat(document.getElementById('inventoryPrice').value),
+                date: document.getElementById('inventoryDate').value
+            };
+            
+            inventory.push(item);
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            
+            hideAddInventoryModal();
+            loadInventory();
+            loadStock();
+            updateDashboard();
+            
+            // Синхронизируем с другими вкладками
+            syncSystem.broadcastDataUpdate('inventory', { inventory: inventory });
+            
+            showToast('Прихід товару успішно додано!', 'success');
+        }
+
+        function deleteInventory(id) {
+            if (!confirm('Видалити цей запис про прихід?')) return;
+            
+            let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+            inventory = inventory.filter(i => i.id !== id);
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            
+            loadInventory();
+            loadStock();
+            updateDashboard();
+            
+            // Синхронизируем с другими вкладками
+            syncSystem.broadcastDataUpdate('inventory', { inventory: inventory });
+            
+            showToast('Запис про прихід видалено!', 'success');
+        }
+
+        // Продажи
+        function loadSales() {
+            const sales = JSON.parse(localStorage.getItem('sales')) || [];
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            
+            const tbody = document.querySelector('#salesTable tbody');
+            tbody.innerHTML = '';
+            
+            if (sales.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 3rem;">
+                            <i class="fas fa-shopping-cart" style="font-size: 3rem; color: #d1d5db; margin-bottom: 1rem;"></i>
+                            <h3 style="color: #6b7280;">Немає продажів</h3>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            sales.forEach(sale => {
+                const product = products.find(p => p.id === sale.productId);
+                const total = sale.quantity * sale.price;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${sale.id}</td>
+                    <td>${product ? product.name : 'Товар видалено'}</td>
+                    <td>${product ? product.model : '—'}</td>
+                    <td>${sale.quantity}</td>
+                    <td>${sale.price.toFixed(2)} ₴</td>
+                    <td>${sale.date}</td>
+                    <td><strong>${total.toFixed(2)} ₴</strong></td>
+                    <td><span class="text-success">${sale.profit.toFixed(2)} ₴</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn btn-danger btn-sm" onclick="deleteSale(${sale.id})" title="Видалити">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function showAddSaleModal() {
+            updateProductSelect('saleProduct');
+            document.getElementById('saleDate').valueAsDate = new Date();
+            document.getElementById('addSaleModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Обновляем остаток
+            setTimeout(() => updateAvailableStock(), 100);
+        }
+
+        function hideAddSaleModal() {
+            document.getElementById('addSaleModal').classList.remove('active');
+            document.getElementById('saleForm').reset();
+            document.getElementById('saleTotal').textContent = '0.00';
+            document.body.style.overflow = 'auto';
+        }
+
+        function updateProductSelect(selectId) {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const select = document.getElementById(selectId);
+            
+            select.innerHTML = '<option value="">Оберіть товар</option>';
+            
+            products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = `${product.name} (${product.model}) - ${product.color}`;
+                select.appendChild(option);
+            });
+        }
+
+        function updateSalePrice() {
+            const productId = document.getElementById('saleProduct').value;
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const product = products.find(p => p.id == productId);
+            
+            if (product) {
+                document.getElementById('salePrice').value = product.price;
+                calculateSaleTotal();
+                updateAvailableStock();
+            }
+        }
+
+        function calculateSaleTotal() {
+            const quantity = parseInt(document.getElementById('saleQuantity').value) || 0;
+            const price = parseFloat(document.getElementById('salePrice').value) || 0;
+            const total = quantity * price;
+            
+            document.getElementById('saleTotal').textContent = total.toFixed(2);
+        }
+
+        function getAvailableStock(productId) {
+            const inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+            const sales = JSON.parse(localStorage.getItem('sales')) || [];
+            
+            const totalIn = inventory
+                .filter(i => i.productId == productId)
+                .reduce((sum, i) => sum + i.quantity, 0);
+            
+            const totalOut = sales
+                .filter(s => s.productId == productId)
+                .reduce((sum, s) => sum + s.quantity, 0);
+            
+            return totalIn - totalOut;
+        }
+
+        function updateAvailableStock() {
+            const productId = document.getElementById('saleProduct').value;
+            const availableStock = document.getElementById('availableStock');
+            
+            if (!productId) {
+                availableStock.textContent = 'Оберіть товар';
+                return;
+            }
+            
+            const stock = getAvailableStock(productId);
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const product = products.find(p => p.id == productId);
+            
+            if (product) {
+                let stockClass = 'stock-good';
+                if (stock <= 0) stockClass = 'stock-low';
+                else if (stock <= 3) stockClass = 'stock-medium';
+                
+                availableStock.innerHTML = `
+                    <span class="${stockClass}">${stock} шт</span>
+                    <small style="color: #6b7280; margin-left: 0.5rem;">
+                        (${product.name})
+                    </small>
+                `;
+            }
+        }
+
+        function addSale(e) {
+            e.preventDefault();
+            
+            const productId = parseInt(document.getElementById('saleProduct').value);
+            const quantity = parseInt(document.getElementById('saleQuantity').value);
+            const price = parseFloat(document.getElementById('salePrice').value);
+            const date = document.getElementById('saleDate').value;
+            
+            // Проверка наличия
+            const availableStock = getAvailableStock(productId);
+            if (availableStock < quantity) {
+                showToast(`Недостатньо товару на складі! Доступно: ${availableStock} шт`, 'error');
+                return;
+            }
+            
+            // Находим продукт для расчета прибыли
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const product = products.find(p => p.id == productId);
+            
+            if (!product) {
+                showToast('Товар не знайдено!', 'error');
+                return;
+            }
+            
+            const profit = quantity * (price - product.cost);
+            
+            // Добавляем продажу
+            const sales = JSON.parse(localStorage.getItem('sales')) || [];
+            const newId = sales.length > 0 ? Math.max(...sales.map(s => s.id)) + 1 : 1;
+            
+            const sale = {
+                id: newId,
+                productId: productId,
+                quantity: quantity,
+                price: price,
+                profit: profit,
+                date: date
+            };
+            
+            sales.push(sale);
+            localStorage.setItem('sales', JSON.stringify(sales));
+            
+            // Создаем чек
+            createReceipt(sale, product);
+            
+            hideAddSaleModal();
+            loadSales();
+            loadStock();
+            loadReceipts();
+            updateDashboard();
+            
+            // Синхронизируем с другими вкладками
+            syncSystem.broadcastDataUpdate('sales', { sales: sales });
+            syncSystem.broadcastDataUpdate('receipts', { 
+                receipts: JSON.parse(localStorage.getItem('receipts')) 
+            });
+            
+            showToast('Продаж успішно оформлено!', 'success');
+        }
+
+        function deleteSale(id) {
+            if (!confirm('Видалити цей запис про продаж? Связаний чек також буде видалено.')) return;
+            
+            let sales = JSON.parse(localStorage.getItem('sales')) || [];
+            const saleToDelete = sales.find(s => s.id === id);
+            
+            if (saleToDelete) {
+                // Удаляем связанный чек
+                let receipts = JSON.parse(localStorage.getItem('receipts')) || [];
+                receipts = receipts.filter(r => r.saleId !== id);
+                localStorage.setItem('receipts', JSON.stringify(receipts));
+            }
+            
+            sales = sales.filter(s => s.id !== id);
+            localStorage.setItem('sales', JSON.stringify(sales));
+            
+            loadSales();
+            loadStock();
+            loadReceipts();
+            updateDashboard();
+            
+            // Синхронизируем с другими вкладками
+            syncSystem.broadcastDataUpdate('sales', { sales: sales });
+            syncSystem.broadcastDataUpdate('receipts', { 
+                receipts: JSON.parse(localStorage.getItem('receipts')) 
+            });
+            
+            showToast('Продаж видалено!', 'success');
+        }
+
+        // Остатки
+        function loadStock() {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const tbody = document.querySelector('#stockTable tbody');
+            tbody.innerHTML = '';
+            
+            if (products.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 3rem;">
+                            <i class="fas fa-warehouse" style="font-size: 3rem; color: #d1d5db; margin-bottom: 1rem;"></i>
+                            <h3 style="color: #6b7280;">Немає товарів на складі</h3>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let totalStock = 0;
+            
+            products.forEach(product => {
+                const stock = getAvailableStock(product.id);
+                totalStock += stock > 0 ? stock : 0;
+                const profitPerUnit = product.price - product.cost;
+                
+                let stockClass = 'stock-good';
+                if (stock <= 0) stockClass = 'stock-low';
+                else if (stock <= 3) stockClass = 'stock-medium';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td><span class="badge badge-primary">${product.model}</span></td>
+                    <td>${product.type}</td>
+                    <td>${product.color}</td>
+                    <td><span class="${stockClass}">${stock} шт</span></td>
+                    <td>${product.cost.toFixed(2)} ₴</td>
+                    <td><strong>${product.price.toFixed(2)} ₴</strong></td>
+                    <td><span class="text-success">${profitPerUnit.toFixed(2)} ₴</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn btn-sm btn-primary" onclick="editProduct(${product.id})" title="Редагувати">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Добавляем строку с итогом
+            const totalRow = document.createElement('tr');
+            totalRow.style.backgroundColor = '#f8fafc';
+            totalRow.style.fontWeight = 'bold';
+            totalRow.innerHTML = `
+                <td colspan="4" style="text-align: right; color: var(--dark);">Всього чехлів на складі:</td>
+                <td style="color: var(--primary); font-size: 1.1rem;">${totalStock} шт</td>
+                <td colspan="4"></td>
+            `;
+            tbody.appendChild(totalRow);
+        }
+
+        function showLowStockAlert() {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            let message = 'Товари з низькими залишками:\n\n';
+            let hasLowStock = false;
+            
+            products.forEach(product => {
+                const stock = getAvailableStock(product.id);
+                if (stock <= 3) {
+                    hasLowStock = true;
+                    const icon = stock <= 0 ? '🔴' : stock <= 3 ? '🟡' : '🟢';
+                    message += `${icon} ${product.name} (${product.model}): ${stock} шт\n`;
+                }
+            });
+            
+            if (!hasLowStock) {
+                message = '🎉 Всі товари мають достатній залишок!';
+            }
+            
+            alert(message);
+        }
+
+        // Дашборд
+        function updateDashboard() {
+            const today = new Date().toISOString().split('T')[0];
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayStr = yesterday.toISOString().split('T')[0];
+            
+            const sales = JSON.parse(localStorage.getItem('sales')) || [];
+            
+            // Сегодняшние данные
+            const todaySales = sales.filter(s => s.date === today);
+            const todayRevenue = todaySales.reduce((sum, s) => sum + (s.quantity * s.price), 0);
+            const todayProfit = todaySales.reduce((sum, s) => sum + s.profit, 0);
+            const todayQuantity = todaySales.reduce((sum, s) => sum + s.quantity, 0);
+            
+            // Вчерашние данные
+            const yesterdaySales = sales.filter(s => s.date === yesterdayStr);
+            const yesterdayRevenue = yesterdaySales.reduce((sum, s) => sum + (s.quantity * s.price), 0);
+            const yesterdayProfit = yesterdaySales.reduce((sum, s) => sum + s.profit, 0);
+            const yesterdayQuantity = yesterdaySales.reduce((sum, s) => sum + s.quantity, 0);
+            
+            // Обновляем значения
+            document.getElementById('today-revenue').textContent = todayRevenue.toFixed(2);
+            document.getElementById('today-profit').textContent = todayProfit.toFixed(2);
+            document.getElementById('today-sales').textContent = todayQuantity;
+            
+            // Обновляем общее количество чехлов на складе
+            updateTotalStockDisplay();
+            
+            // Рассчитываем изменения
+            let revenueChange = 0;
+            let profitChange = 0;
+            let salesChange = 0;
+            
+            if (yesterdayRevenue > 0) {
+                revenueChange = ((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100;
+            } else if (todayRevenue > 0) {
+                revenueChange = 100;
+            }
+            
+            if (yesterdayProfit > 0) {
+                profitChange = ((todayProfit - yesterdayProfit) / yesterdayProfit) * 100;
+            } else if (todayProfit > 0) {
+                profitChange = 100;
+            }
+            
+            if (yesterdayQuantity > 0) {
+                salesChange = ((todayQuantity - yesterdayQuantity) / yesterdayQuantity) * 100;
+            } else if (todayQuantity > 0) {
+                salesChange = 100;
+            }
+            
+            // Обновляем отображение процентов
+            document.getElementById('revenue-change').textContent = Math.abs(revenueChange).toFixed(1) + '%';
+            document.getElementById('profit-change').textContent = Math.abs(profitChange).toFixed(1) + '%';
+            document.getElementById('sales-change').textContent = Math.abs(salesChange).toFixed(1) + '%';
+            
+            // Обновляем стрелки
+            const revenueChangeEl = document.querySelector('#dashboard .stat-card:nth-child(1) .stat-change');
+            const profitChangeEl = document.querySelector('#dashboard .stat-card:nth-child(2) .stat-change');
+            const salesChangeEl = document.querySelector('#dashboard .stat-card:nth-child(3) .stat-change');
+            
+            if (revenueChangeEl) {
+                revenueChangeEl.className = `stat-change ${revenueChange >= 0 ? 'up' : 'down'}`;
+                revenueChangeEl.innerHTML = `<i class="fas fa-arrow-${revenueChange >= 0 ? 'up' : 'down'}"></i> <span id="revenue-change">${Math.abs(revenueChange).toFixed(1)}%</span> порівняно з учора`;
+            }
+            
+            if (profitChangeEl) {
+                profitChangeEl.className = `stat-change ${profitChange >= 0 ? 'up' : 'down'}`;
+                profitChangeEl.innerHTML = `<i class="fas fa-arrow-${profitChange >= 0 ? 'up' : 'down'}"></i> <span id="profit-change">${Math.abs(profitChange).toFixed(1)}%</span> порівняно з учора`;
+            }
+            
+            if (salesChangeEl) {
+                salesChangeEl.className = `stat-change ${salesChange >= 0 ? 'up' : 'down'}`;
+                salesChangeEl.innerHTML = `<i class="fas fa-arrow-${salesChange >= 0 ? 'up' : 'down'}"></i> <span id="sales-change">${Math.abs(salesChange).toFixed(1)}%</span> порівняно з учора`;
+            }
+            
+            // Обновляем низкие остатки
+            const stockInfo = calculateLowStock();
+            document.getElementById('critical-items').textContent = stockInfo.criticalCount;
+            
+            // Последние транзакции
+            updateRecentTransactions();
+            
+            // График
+            updateDashboardChart();
+        }
+
+        function updateRecentTransactions() {
+            const sales = JSON.parse(localStorage.getItem('sales')) || [];
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const tbody = document.querySelector('#recentTransactions tbody');
+            tbody.innerHTML = '';
+            
+            const recentSales = sales.slice(-5).reverse();
+            
+            if (recentSales.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem; color: #6b7280;">
+                            <i class="fas fa-info-circle"></i> Немає останніх операцій
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            recentSales.forEach(sale => {
+                const product = products.find(p => p.id === sale.productId);
+                const total = sale.quantity * sale.price;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${sale.date}</td>
+                    <td><span class="badge badge-success">Продаж</span></td>
+                    <td>${product ? product.name : '—'}</td>
+                    <td>${product ? product.model : '—'}</td>
+                    <td>${sale.quantity}</td>
+                    <td><strong>${total.toFixed(2)} ₴</strong></td>
+                    <td><span class="text-success">${sale.profit.toFixed(2)} ₴</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function loadRecentTransactions() {
+            updateRecentTransactions();
+            showToast('Останні операції оновлено!', 'success');
+        }
+
+        function updateDashboardChart() {
+            const ctx = document.getElementById('dashboardChart');
+            if (!ctx) return;
+            
+            const sales = JSON.parse(localStorage.getItem('sales')) || [];
+            
+            // Группируем продажи за последние 7 дней
+            const dates = [];
+            const revenueData = [];
+            const profitData = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                
+                dates.push(date.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' }));
+                
+                const daySales = sales.filter(s => s.date === dateStr);
+                const revenue = daySales.reduce((sum, s) => sum + (s.quantity * s.price), 0);
+                const profit = daySales.reduce((sum, s) => sum + s.profit, 0);
+                
+                revenueData.push(revenue);
+                profitData.push(profit);
+            }
+            
+            if (dashboardChart) {
+                dashboardChart.destroy();
+            }
+            
+            dashboardChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'Виручка',
+                            data: revenueData,
+                            borderColor: '#2563eb',
+                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Прибуток',
+                            data: profitData,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Динаміка продажів',
+                            font: { size: 16, weight: '600' }
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: { font: { size: 12 } }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Сума (₴)',
+                                font: { weight: '600' }
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString('uk-UA') + ' ₴';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Отчеты
+        function generateReport() {
+            const sales = JSON.parse(localStorage.getItem('sales')) || [];
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            
+            let totalRevenue = 0;
+            let totalCost = 0;
+            let totalProfit = 0;
+            let totalQuantity = 0;
+            
+            const salesByProduct = {};
+            
+            sales.forEach(sale => {
+                const product = products.find(p => p.id === sale.productId);
+                if (!product) return;
+                
+                if (!salesByProduct[product.id]) {
+                    salesByProduct[product.id] = {
+                        name: product.name,
+                        model: product.model,
+                        quantity: 0,
+                        revenue: 0,
+                        cost: 0,
+                        profit: 0
+                    };
+                }
+                
+                salesByProduct[product.id].quantity += sale.quantity;
+                salesByProduct[product.id].revenue += sale.quantity * sale.price;
+                salesByProduct[product.id].cost += sale.quantity * product.cost;
+                salesByProduct[product.id].profit += sale.profit;
+                
+                totalRevenue += sale.quantity * sale.price;
+                totalCost += sale.quantity * product.cost;
+                totalProfit += sale.profit;
+                totalQuantity += sale.quantity;
+            });
+            
+            // Обновляем статистику
+            document.getElementById('report-revenue').textContent = totalRevenue.toFixed(2);
+            document.getElementById('report-profit').textContent = totalProfit.toFixed(2);
+            document.getElementById('report-sales').textContent = totalQuantity;
+            
+            const margin = totalRevenue > 0 ? (totalProfit / totalRevenue * 100) : 0;
+            document.getElementById('report-margin').textContent = margin.toFixed(1) + '%';
+            
+            // Обновляем таблицу
+            const tbody = document.querySelector('#reportTable tbody');
+            tbody.innerHTML = '';
+            
+            Object.values(salesByProduct).forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>${item.model}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.revenue.toFixed(2)} ₴</td>
+                    <td>${item.cost.toFixed(2)} ₴</td>
+                    <td><span class="text-success">${item.profit.toFixed(2)} ₴</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Обновляем график
+            updateReportChart(salesByProduct);
+        }
+
+        function updateReportChart(salesData) {
+            const ctx = document.getElementById('reportChart');
+            if (!ctx) return;
+            
+            const labels = Object.values(salesData).map(item => `${item.name} (${item.model})`);
+            const profitData = Object.values(salesData).map(item => item.profit);
+            
+            if (reportChart) {
+                reportChart.destroy();
+            }
+            
+            reportChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: profitData,
+                        backgroundColor: [
+                            '#2563eb', '#8b5cf6', '#10b981', '#f59e0b', 
+                            '#ef4444', '#06b6d4', '#8b5cf6', '#ec4899',
+                            '#f97316', '#84cc16', '#06b6d4', '#8b5cf6'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Розподіл прибутку по товарам',
+                            font: { size: 16, weight: '600' }
+                        },
+                        legend: {
+                            position: 'right',
+                            labels: { 
+                                font: { size: 11 },
+                                boxWidth: 12,
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${context.label}: ${value.toFixed(2)} ₴ (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Чеки
+        function createReceipt(sale, product) {
+            const receipts = JSON.parse(localStorage.getItem('receipts')) || [];
+            const newId = receipts.length > 0 ? Math.max(...receipts.map(r => r.id)) + 1 : 1;
+            
+            const receipt = {
+                id: newId,
+                saleId: sale.id,
+                productId: product.id,
+                productName: product.name,
+                productModel: product.model,
+                productType: product.type,
+                productColor: product.color,
+                quantity: sale.quantity,
+                price: sale.price,
+                total: sale.quantity * sale.price,
+                profit: sale.profit,
+                date: sale.date,
+                time: new Date().toLocaleTimeString('uk-UA', {hour: '2-digit', minute:'2-digit'}),
+                createdAt: new Date().toISOString()
+            };
+            
+            receipts.push(receipt);
+            localStorage.setItem('receipts', JSON.stringify(receipts));
+            
+            // Обновляем отображение чеков
+            updateTotalStockDisplay();
+        }
+
+        function loadReceipts() {
+            const receipts = JSON.parse(localStorage.getItem('receipts')) || [];
+            const container = document.getElementById('receiptsArchive');
+            
+            if (receipts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-receipt"></i>
+                        <h3>Архів чеків порожній</h3>
+                        <p>Тут будуть відображатись всі створені чеки</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            receipts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).forEach(receipt => {
+                const receiptElement = document.createElement('div');
+                receiptElement.className = 'receipt-archive-item';
+                receiptElement.style.cssText = `
+                    background: white;
+                    border-radius: 12px;
+                    padding: 1.5rem;
+                    margin-bottom: 1rem;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                    border-left: 4px solid #2563eb;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    position: relative;
+                `;
+                
+                receiptElement.onmouseover = function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                };
+                
+                receiptElement.onmouseout = function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                };
+                
+                receiptElement.innerHTML = `
+                    <button class="delete-receipt-btn" onclick="deleteReceipt(${receipt.id}, event)" title="Видалити чек">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <div>
+                            <div style="font-weight: 600; color: #1f2937;">${receipt.productName}</div>
+                            <div style="font-size: 0.875rem; color: #6b7280;">${receipt.productModel} • ${receipt.productColor} • ${receipt.productType}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-weight: 700; font-size: 1.25rem; color: #2563eb;">${receipt.total.toFixed(2)} ₴</div>
+                            <div style="font-size: 0.875rem; color: #6b7280;">${receipt.date} ${receipt.time}</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: #6b7280;">
+                        <div>Кількість: ${receipt.quantity} шт × ${receipt.price.toFixed(2)} ₴</div>
+                        <div>Прибуток: <span style="color: #10b981; font-weight: 600;">${receipt.profit.toFixed(2)} ₴</span></div>
+                    </div>
+                    <div style="text-align: right; margin-top: 0.5rem;">
+                        <span style="font-size: 0.75rem; color: #9ca3af; background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 4px;">
+                            Чек №${receipt.id}
+                        </span>
+                    </div>
+                `;
+                
+                receiptElement.onclick = function(e) {
+                    if (!e.target.closest('.delete-receipt-btn')) {
+                        showReceiptPreview(receipt);
+                    }
+                };
+                
+                container.appendChild(receiptElement);
+            });
+            
+            // Обновляем счетчик чеков
+            updateTotalStockDisplay();
+        }
+
+        function deleteReceipt(id, event) {
+            event.stopPropagation();
+            
+            if (!confirm('Видалити цей чек? Ця дія незворотна.')) {
+                return;
+            }
+            
+            let receipts = JSON.parse(localStorage.getItem('receipts')) || [];
+            receipts = receipts.filter(r => r.id !== id);
+            localStorage.setItem('receipts', JSON.stringify(receipts));
+            
+            loadReceipts();
+            
+            // Синхронизируем с другими вкладками
+            syncSystem.broadcastDataUpdate('receipts', { receipts: receipts });
+            
+            showToast('Чек видалено!', 'success');
+        }
+
+        function deleteAllReceipts() {
+            if (!confirm('Ви впевнені, що хочете видалити ВСІ чеки? Ця дія незворотна!')) {
+                return;
+            }
+            
+            localStorage.setItem('receipts', JSON.stringify([]));
+            
+            loadReceipts();
+            
+            // Синхронизируем с другими вкладками
+            syncSystem.broadcastDataUpdate('receipts', { receipts: [] });
+            
+            showToast('Всі чеки видалено!', 'success');
+        }
+
+        function showReceiptPreview(receipt) {
+            const receiptPreviewContent = document.getElementById('receiptPreviewContent');
+            
+            const receiptHTML = `
+                <div class="receipt-container">
+                    <div class="receipt-header">
+                        <div class="receipt-title">ALDAN MOONSKULL</div>
+                    </div>              
+                    <div class="receipt-info">
+                        <div class="receipt-row">
+                            <span class="receipt-label">Чек №:</span>
+                            <span>${receipt.id}</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Дата:</span>
+                            <span>${receipt.date}</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Час:</span>
+                            <span>${receipt.time}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="receipt-divider"></div>
+                    
+                    <div class="receipt-info">
+                        <div class="receipt-row">
+                            <span class="receipt-label">Товар:</span>
+                            <span>${receipt.productName}</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Модель:</span>
+                            <span>${receipt.productModel}</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Тип:</span>
+                            <span>${receipt.productType}</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Колір:</span>
+                            <span>${receipt.productColor}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="receipt-divider"></div>
+                    
+                    <div class="receipt-info">
+                        <div class="receipt-row">
+                            <span class="receipt-label">Кількість:</span>
+                            <span>${receipt.quantity} шт</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Ціна за шт:</span>
+                            <span>${receipt.price.toFixed(2)} ₴</span>
+                        </div>
+                    </div>
+                    
+                    <div class="receipt-divider"></div>
+                    
+                    <div class="receipt-info">
+                        <div class="receipt-row receipt-total">
+                            <span>ЗАГАЛЬНА СУМА:</span>
+                            <span>${receipt.total.toFixed(2)} ₴</span>
+                        </div>
+                    </div>
+                    
+                    <div class="receipt-divider"></div>
+                    
+                    <div class="receipt-footer">
+                        <div>Дякуємо за покупку!</div>
+                        <div style="margin-top: 5px;">ALDAN MOONSKULL</div>
+                    </div>
+                </div>
+            `;
+            
+            receiptPreviewContent.innerHTML = receiptHTML;
+            document.getElementById('receiptPreviewModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideReceiptPreview() {
+            document.getElementById('receiptPreviewModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function printReceipt() {
+            const receiptContent = document.getElementById('receiptPreviewContent').innerHTML;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Друк чека</title>
+                    <style>
+                        body { 
+                            font-family: 'Courier New', monospace; 
+                            padding: 20px;
+                            background: white;
+                        }
+                        .receipt-container {
+                            max-width: 300px;
+                            margin: 0 auto;
+                        }
+                        @media print {
+                            body { padding: 0; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${receiptContent}
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                            setTimeout(function() {
+                                window.close();
+                            }, 100);
+                        }
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        // Экспорт данных
+        function exportData() {
+            const data = {
+                products: JSON.parse(localStorage.getItem('products')) || [],
+                inventory: JSON.parse(localStorage.getItem('inventory')) || [],
+                sales: JSON.parse(localStorage.getItem('sales')) || [],
+                receipts: JSON.parse(localStorage.getItem('receipts')) || [],
+                exportedAt: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `iphonecase-elite-backup-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Дані успішно експортовано!', 'success');
+        }
+
+        function refreshData() {
+            updateDashboard();
+            showToast('Дані оновлено!', 'success');
+        }
+
+        function hideToast() {
+            document.getElementById('toast').classList.remove('show');
+        }
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализируем данные
+            initializeData();
+            
+            // Устанавливаем текущую дату
+            const today = new Date();
+            document.getElementById('current-date').textContent = formatDate(today);
+            
+            // Устанавливаем даты по умолчанию
+            document.getElementById('inventoryDate').valueAsDate = today;
+            document.getElementById('saleDate').valueAsDate = today;
+            
+            // Загружаем начальные данные
+            loadProducts();
+            loadInventory();
+            loadSales();
+            loadStock();
+            loadReceipts();
+            updateDashboard();
+            
+            // Добавляем слушатели событий для формы продажи
+            document.getElementById('saleQuantity').addEventListener('input', calculateSaleTotal);
+            document.getElementById('salePrice').addEventListener('input', calculateSaleTotal);
+            document.getElementById('saleProduct').addEventListener('change', updateSalePrice);
+            
+            // Обработка закрытия модальных окон
+            document.querySelectorAll('.modal-close').forEach(closeBtn => {
+                closeBtn.addEventListener('click', function() {
+                    document.body.style.overflow = 'auto';
+                });
+            });
+            
+            // Закрытие модальных окон при клике на оверлей
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            });
+            
+            // Обработка закрытия сайдбара при клике на ссылку
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', closeSidebarOnMobile);
+            });
+            
+            // Показываем статус синхронизации
+            setTimeout(() => syncSystem.updateSyncStatus(), 1000);
+            
+            // Очистка при закрытии страницы
+            window.addEventListener('beforeunload', () => {
+                syncSystem.cleanup();
+            });
+        });
+    </script>
+</body>
+</html>
